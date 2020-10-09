@@ -13,9 +13,7 @@ const users: User[] = [
   name: 'Rakhat',
   email: 'rakha.aubakirov@gmail.com',
   password: '1234',
-  nameError: '',
-  emailError: '', 
-  passwordError: '',
+  
   }
 
 
@@ -23,6 +21,8 @@ const users: User[] = [
 
 function App() {
   const [showedElement, setShowedElement] = useState(<></>);
+  const [errors, setErrors] = useState('');
+
 
   return (
     <div className="card">
@@ -32,8 +32,12 @@ function App() {
       </div>
 
       {showedElement}
+      {errors && (<label style={{color: "red"}}>{errors}</label>)}
+
     </div>
   );
+
+  
 
   function showPage(page?: AuthorizationPages, user?: User) {
     switch (page) {
@@ -48,9 +52,11 @@ function App() {
         setShowedElement(
           (prevElement) =>
             (prevElement = (
-              <Registration registrate={createNewUser} cancel={showPage} />
+              <Registration registrate={createNewUser} cancel={showPage} validateUser={validate}/>
+              
             ))
         );
+
         break;
 
       case AuthorizationPages.Welcome:
@@ -65,16 +71,56 @@ function App() {
     }
   }
 
+  function validate(user: User){
+    
+    let str = ''
+
+    console.log(users)
+    if(!user.name){
+      str += 'Name is required '
+    }
+
+   
+    if(!user.email.includes('@') || !user.email){
+      str += 'Invalid email '
+    }
+
+    if(user.password.length === 0 && user.password.length < 8){
+      str += 'Password must contain at least 8 symbols ' 
+    }
+
+    if(str){
+      setErrors(str)
+      return false
+    }
+
+    return true
+
+  }
+
   function createNewUser(user: User) {
-    if (users && user) {
+    
+    if (users && user && validate(user)) {
       const checker = users.find((u) => u.email === user.email);
       if (checker) {
         return;
       }
+
+      if(user.name.length > 0){
+        user.id = users.length + 1;
+        users.push(user);
+        showPage(AuthorizationPages.Auth);
+      }
+     
+      // else{
+      //   return(
+      //     alert('Name is required')
+      //   );
+      // }
       
-      user.id = users.length + 1;
-      users.push(user);
-      showPage(AuthorizationPages.Auth);
+      // user.id = users.length + 1;
+      // users.push(user);
+      // showPage(AuthorizationPages.Auth);
     }
   }
 
@@ -89,6 +135,7 @@ function App() {
       }
     }
   }
+  
 }
 
 export default App;

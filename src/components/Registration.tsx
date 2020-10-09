@@ -5,11 +5,12 @@ import  Field  from '../shared/Field'
 interface Props {
     registrate: (user: User) => void,
     cancel: () => void,
+    validateUser: (user: User) => void
 }
 
 
 
-export default function Registration({registrate, cancel}: Props): ReactElement {
+export default function Registration({registrate, cancel, validateUser}: Props): ReactElement {
 
      
 
@@ -23,6 +24,7 @@ export default function Registration({registrate, cancel}: Props): ReactElement 
             type='text'
             label='Name'
             onChange={(e) => user.name = e.target.value}
+
             required
              />
 
@@ -43,7 +45,7 @@ export default function Registration({registrate, cancel}: Props): ReactElement 
            
             <div className="buttons">
                 <button className="btn" onClick={cancel}>Cancel</button>
-                <button className="btn" onClick={() => registrate(user)}>Submit</button>
+                <button className="btn" onClick={() => registrate(user)} onSubmit={() => validateUser(user)}>Submit</button>
             </div>
             
             </div>
